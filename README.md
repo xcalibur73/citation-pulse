@@ -115,7 +115,7 @@ print(f"Search Bots Score: {status['search_bots_score']}/100")
 
 ## Empirical Benchmarks
 
-CitationPulse was tested across 12 production web properties (including developer frameworks, media publications, SaaS homepages, and documentation libraries). Full study findings: [BENCHMARKS.md](BENCHMARKS.md).
+CitationPulse was evaluated while beta testing on random sites (including developer frameworks, media publications, SaaS homepages, and documentation libraries). Full study findings: [BENCHMARKS.md](BENCHMARKS.md).
 
 Key empirical findings:
 - 41.7% of surveyed production domains block training scrapers (`CCBot`, `GPTBot`) while allowing live AI search retrieval bots (`OAI-SearchBot`, `PerplexityBot`).

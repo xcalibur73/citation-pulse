@@ -1,12 +1,12 @@
 # CitationPulse: Empirical 12-Site GEO & AI Crawler Benchmark
 
-Empirical evaluation of 2026 AI search crawler access, passage citability scores, and Knowledge Graph disambiguation across 12 production web properties.
+Empirical evaluation of 2026 AI search crawler access, passage citability scores, and Knowledge Graph disambiguation gathered while beta testing on random sites.
 
 ---
 
 ## Methodology
 
-Each site was audited using CitationPulse v1.0.0. Audits evaluated:
+Evaluated while beta testing on random sites using CitationPulse v1.0.0. Audits evaluated:
 1. Retrieval permissions in `robots.txt` across live search crawlers (`OAI-SearchBot`, `Claude-SearchBot`, `PerplexityBot`, `Googlebot`).
 2. Opt-out status for foundation model scrapers (`GPTBot`, `CCBot`, `ClaudeBot`).
 3. Passage citability scoring based on Princeton University KDD 2024 empirical formulas (word count 134-167 words, statistics, quotes, attributions).
