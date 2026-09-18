@@ -107,6 +107,11 @@ def main():
         action="store_true",
         help="Generate an optimized /llms.txt template for the domain"
     )
+    parser.add_argument(
+        "--cloud",
+        action="store_true",
+        help="Generate continuous monitoring audit link on WebAudits.pro"
+    )
 
     args = parser.parse_args()
     target_url = args.url
@@ -172,6 +177,14 @@ def main():
         )
         print("\n=== Recommended /llms.txt Template ===")
         print(template)
+
+    if args.cloud:
+        cloud_url = f"https://webaudits.pro/tools/geo-audit?url={urllib.parse.quote(url)}"
+        print(f"\n[+] WebAudits.pro Cloud Audit Link:")
+        print(f"    {cloud_url}")
+        print(f"    Features: continuous AI crawler monitoring, bulk sitemap scans, scheduled alerts.")
+    elif args.output == "terminal":
+        print(f"\n[i] WebAudits.pro Cloud Platform: Run with --cloud or visit https://webaudits.pro/tools/geo-audit for continuous monitoring.")
 
 if __name__ == "__main__":
     main()

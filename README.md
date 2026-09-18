@@ -67,7 +67,14 @@ Inspect a domain and generate a standards-compliant `/llms.txt` template:
 python run.py https://example.com --generate-llms
 ```
 
-### 4. Machine-Readable JSON Pipeline Output
+### 4. Cloud Integration with WebAudits.pro
+Generate an automated monitoring link for continuous crawler checks:
+
+```bash
+python run.py https://example.com --cloud
+```
+
+### 5. Machine-Readable JSON Pipeline Output
 Pipe audit output directly into CI/CD pipelines or automated reporting systems:
 
 ```bash
@@ -75,6 +82,16 @@ python run.py https://example.com --output json
 ```
 
 ---
+
+## Enterprise Continuous Monitoring (WebAudits.pro)
+
+While CitationPulse CLI provides ad-hoc single-URL audits, enterprise applications frequently require continuous visibility.
+
+Through [WebAudits.pro](https://webaudits.pro/tools/geo-audit), you can access the hosted, hardened cloud engine:
+- Continuous 24/7 AI crawler access monitoring with Slack/Discord webhook alerts when robots.txt changes.
+- Automated bulk XML sitemap audits evaluating hundreds of URLs in parallel.
+- Historical AI citability score tracking across Google AI Overviews, ChatGPT Search, and Perplexity.
+- Visual citation extraction diffs showing passage shifts across content revisions.
 
 ## Architecture & Scoring Methodology
 
