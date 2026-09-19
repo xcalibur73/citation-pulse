@@ -30,15 +30,17 @@ def fetch_page_html(url: str, timeout: int = 15) -> str:
         return resp.read().decode("utf-8", errors="replace")
 
 def extract_content_passages(soup: BeautifulSoup) -> list:
-    # Remove script, style, nav, footer, header to focus on main body
-    for tag in soup(["script", "style", "nav", "footer", "header", "noscript", "svg"]):
+    import copy
+    doc_copy = copy.copy(soup)
+    # Remove non-content tags from working copy
+    for tag in doc_copy(["script", "style", "nav", "footer", "header", "noscript", "svg"]):
         tag.decompose()
 
     passages = []
     # Search for main content containers first
-    main_el = soup.find("main") or soup.find("article") or soup.find("body")
+    main_el = doc_copy.find("main") or doc_copy.find("article") or doc_copy.find("body")
     if not main_el:
-        main_el = soup
+        main_el = doc_copy
 
     elements = main_el.find_all(["p", "blockquote", "li"])
     for el in elements:
@@ -53,16 +55,16 @@ def run_audit(url: str) -> dict:
     html = fetch_page_html(url)
     soup = BeautifulSoup(html, "html.parser")
 
-    # 2. Extract passages and score citability
+    # 2. Audit Schema.org JSON-LD entities
+    schema_data = audit_schema_entities(soup)
+
+    # 3. Extract passages and score citability
     paragraphs = extract_content_passages(soup)
     passage_data = analyze_document_passages(paragraphs)
 
-    # 3. Inspect robots.txt for AI search and training crawlers
+    # 4. Inspect robots.txt for AI search and training crawlers
     robots_res = fetch_robots_txt(url)
     crawler_data = test_crawler_access(url, robots_res.get("content", ""))
-
-    # 4. Audit Schema.org JSON-LD entities
-    schema_data = audit_schema_entities(soup)
 
     # 5. Check llms.txt validation
     llms_data = fetch_llms_txt(url)
