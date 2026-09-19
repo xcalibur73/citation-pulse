@@ -146,3 +146,37 @@ def analyze_document_passages(paragraphs: List[str]) -> Dict[str, Any]:
         "top_candidates": top_candidates,
         "all_passages": scored_passages
     }
+
+
+def compute_text_density(text: str, link_text_length: int = 0) -> float:
+    """Computes substantive text-to-tag/link density ratio inspired by crawl4ai.
+    High link text ratio (> 0.5) indicates navigation, breadcrumb, or footer link clusters
+    rather than substantive editorial content.
+    """
+    total_len = len(text.strip())
+    if total_len == 0:
+        return 0.0
+    substantive_len = max(0, total_len - link_text_length)
+    return round(substantive_len / total_len, 2)
+
+
+def prune_low_density_passages(passages: List[str], density_threshold: float = 0.5, min_words: int = 8) -> List[str]:
+    """Filters out low-density boilerplate clutter, shallow fragments, and legal notices.
+    Inspired by Crawl4AI PruningContentFilter multi-level heuristic.
+    """
+    pruned = []
+    boilerplate_tokens = [
+        "cookie", "privacy policy", "all rights reserved", "terms of service",
+        "subscribe to our newsletter", "sign up for", "follow us on", "share this article",
+        "copyright"
+    ]
+    for p in passages:
+        words = p.split()
+        if len(words) < min_words:
+            continue
+        p_lower = p.lower()
+        if any(token in p_lower for token in boilerplate_tokens) and len(words) < 35:
+            continue
+        pruned.append(p)
+    return pruned
+

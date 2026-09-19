@@ -108,5 +108,24 @@ Allow: /
         self.assertIn("chatgpt_search", geo["platform_scores"])
         self.assertIn("perplexity_ai", geo["platform_scores"])
 
+    def test_text_density_and_boilerplate_pruning(self):
+        from citation_pulse.passage_scorer import compute_text_density, prune_low_density_passages
+        content_text = "The quick brown fox jumps over the lazy dog and provides empirical benchmarks."
+        self.assertEqual(compute_text_density(content_text, link_text_length=0), 1.0)
+
+        link_list = "Home About Services Pricing Blog Documentation Support Contact"
+        self.assertLess(compute_text_density(link_list, link_text_length=len(link_list)), 0.1)
+
+        raw_passages = [
+            "We use cookies to ensure you get the best experience on our website. Read our Privacy Policy.",
+            "According to Google benchmark metrics, optimizing Largest Contentful Paint requires sub-second server response times.",
+            "All rights reserved. Terms of service apply to all users.",
+            "Read more here."
+        ]
+        pruned = prune_low_density_passages(raw_passages)
+        self.assertEqual(len(pruned), 1)
+        self.assertIn("optimizing Largest Contentful Paint", pruned[0])
+
+
 if __name__ == "__main__":
     unittest.main()

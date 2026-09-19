@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-09-20
+
+### Added
+- Crawl4AI PruningContentFilter multi-level heuristic alignment:
+  - Added `min_words` threshold filtering to discard shallow text fragments (< 8 words) from passage candidate sets.
+  - Enhanced legal disclaimer and platform boilerplate filtering for copyright tokens.
+
+## [1.1.0] - 2026-09-20
+
+### Added
+- Crawl4AI-inspired text-to-tag density pruning in `passage_scorer.py` and `cli.py`:
+  - `compute_text_density()` calculating substantive text ratio vs link anchor text.
+  - Automatic filtering of high-link-density elements (e.g. sidebar navigation, breadcrumbs, social share lists).
+  - `prune_low_density_passages()` filtering out cookie notices and platform boilerplate prior to passage citability scoring.
+
 ## [1.0.0] - 2026-09-19
 
 ### Added

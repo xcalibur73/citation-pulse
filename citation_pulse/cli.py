@@ -10,7 +10,11 @@ import urllib.request
 import urllib.parse
 from bs4 import BeautifulSoup
 
-from citation_pulse.passage_scorer import analyze_document_passages
+from citation_pulse.passage_scorer import (
+    analyze_document_passages,
+    compute_text_density,
+    prune_low_density_passages
+)
 from citation_pulse.crawler_inspector import fetch_robots_txt, test_crawler_access
 from citation_pulse.schema_auditor import audit_schema_entities
 from citation_pulse.llms_validator import fetch_llms_txt, generate_llms_txt_template
@@ -33,7 +37,7 @@ def extract_content_passages(soup: BeautifulSoup) -> list:
     import copy
     doc_copy = copy.copy(soup)
     # Remove non-content tags from working copy
-    for tag in doc_copy(["script", "style", "nav", "footer", "header", "noscript", "svg"]):
+    for tag in doc_copy(["script", "style", "nav", "footer", "header", "noscript", "svg", "aside"]):
         tag.decompose()
 
     passages = []
@@ -46,9 +50,15 @@ def extract_content_passages(soup: BeautifulSoup) -> list:
     for el in elements:
         text = " ".join(el.get_text().split()).strip()
         if len(text.split()) >= 15:
-            passages.append(text)
+            # Crawl4ai-inspired text-to-link density evaluation
+            links = el.find_all("a")
+            link_text = " ".join(a.get_text() for a in links).strip()
+            density = compute_text_density(text, len(link_text))
+            # Filter out link-heavy navigation blocks masquerading as content
+            if density >= 0.45:
+                passages.append(text)
 
-    return passages
+    return prune_low_density_passages(passages)
 
 def run_audit(url: str) -> dict:
     # 1. Fetch main HTML
