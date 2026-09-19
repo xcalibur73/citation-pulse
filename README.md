@@ -5,6 +5,7 @@ Generative Engine Optimization (GEO) & AI Citability Auditor
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Code Style: Clean](https://img.shields.io/badge/code%20style-production-000000.svg)](https://github.com/xcalibur73/citation-pulse)
+[![Cloud Engine: WebAudits.pro](https://img.shields.io/badge/cloud-webaudits.pro-orange.svg)](https://webaudits.pro/tools/geo-audit)
 
 CitationPulse is a command-line utility and Python audit library for Generative Engine Optimization (GEO). It evaluates web pages against the retrieval and citation heuristics used by Google AI Overviews, ChatGPT Search, Perplexity AI, and Claude.
 
