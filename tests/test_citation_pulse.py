@@ -3,6 +3,9 @@ Unit tests for CitationPulse GEO & AI Citability modules.
 """
 
 import unittest
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from bs4 import BeautifulSoup
 from citation_pulse.passage_scorer import score_passage, analyze_document_passages
 from citation_pulse.crawler_inspector import test_crawler_access, parse_robots_rules

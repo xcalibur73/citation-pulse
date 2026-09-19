@@ -13,6 +13,25 @@ try:
 except ImportError:
     HAS_RICH = False
 
+
+def _safe_str(text: Any) -> str:
+    if not isinstance(text, str):
+        text = str(text or "")
+    text = (
+        text.replace("\u2192", "->")
+        .replace("\u2190", "<-")
+        .replace("\u2194", "<->")
+        .replace("\u2022", "*")
+        .replace("\u2019", "'")
+        .replace("\u2018", "'")
+        .replace("\u201c", '"')
+        .replace("\u201d", '"')
+        .replace("\u2014", "-")
+        .replace("\u2013", "-")
+    )
+    return text.encode("ascii", errors="replace").decode("ascii")
+
+
 def calculate_composite_geo_score(passage_data: Dict[str, Any], crawler_data: Dict[str, Any], schema_data: Dict[str, Any], llms_data: Dict[str, Any]) -> Dict[str, Any]:
     # Weights:
     # 1. Passage Citability (35%)
@@ -88,7 +107,7 @@ def print_terminal_geo_report(url: str, geo_result: Dict[str, Any], passage_data
     
     header = Text()
     header.append("CitationPulse: Generative Engine Optimization (GEO) Auditor\n", style="bold magenta")
-    header.append(f"Target: {url}\n", style="bold white")
+    header.append(f"Target: {_safe_str(url)}\n", style="bold white")
     header.append(f"GEO Readiness Score: {score}/100\n", style=f"bold {score_color}")
     header.append(f"Analyzed Passages: {passage_data.get('total_analyzed_passages')} | High-Probability Snippets: {passage_data.get('high_potential_citable_blocks')}", style="dim")
 
@@ -127,14 +146,14 @@ def print_terminal_geo_report(url: str, geo_result: Dict[str, Any], passage_data
         cand_table.add_column("Candidate Passage Preview", style="white")
 
         for cand in passage_data["top_candidates"]:
-            cand_table.add_row(f"{cand['score']}/100", f"{cand['word_count']} w", cand["preview"])
+            cand_table.add_row(f"{cand['score']}/100", f"{cand['word_count']} w", _safe_str(cand["preview"]))
 
         console.print(cand_table)
 
     # Recommendations Panel
     rec_text = Text()
     for i, r in enumerate(geo_result["recommendations"], 1):
-        rec_text.append(f"{i}. {r}\n", style="bold white")
+        rec_text.append(f"{i}. {_safe_str(r)}\n", style="bold white")
 
     console.print(Panel(rec_text, title="Highest-Impact GEO Recommendations", border_style="yellow"))
 

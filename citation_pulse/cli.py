@@ -90,10 +90,17 @@ def run_audit(url: str) -> dict:
     }
 
 def main():
+    from citation_pulse import __version__
     parser = argparse.ArgumentParser(
+        prog="citation-pulse",
         description="CitationPulse: Generative Engine Optimization (GEO) & AI Citability Auditor"
     )
-    parser.add_argument("url", help="Target URL to audit for AI search citability")
+    parser.add_argument("url", nargs="?", help="Target URL to audit for AI search citability")
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"CitationPulse v{__version__}"
+    )
     parser.add_argument(
         "--output", "-o",
         choices=["terminal", "markdown", "json"],
@@ -116,6 +123,10 @@ def main():
     )
 
     args = parser.parse_args()
+    if not args.url:
+        parser.print_help()
+        return 0
+
     target_url = args.url
     if not target_url.startswith("http://") and not target_url.startswith("https://"):
         target_url = "https://" + target_url
