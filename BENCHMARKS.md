@@ -1,15 +1,15 @@
-# CitationPulse: Empirical 12-Site GEO & AI Crawler Benchmark
+# CitationPulse: 12-Site GEO & AI Crawler Study
 
-Empirical evaluation of 2026 AI search crawler access, passage citability scores, and Knowledge Graph disambiguation gathered while beta testing on random sites.
+Evaluation of AI search crawler access, passage citability scores, and Knowledge Graph disambiguation gathered during local testing.
 
 ---
 
 ## Methodology
 
-Evaluated while beta testing on random sites using CitationPulse v1.0.0. Audits evaluated:
+Evaluated using CitationPulse v1.0.0. Audits measured:
 1. Retrieval permissions in `robots.txt` across live search crawlers (`OAI-SearchBot`, `Claude-SearchBot`, `PerplexityBot`, `Googlebot`).
 2. Opt-out status for foundation model scrapers (`GPTBot`, `CCBot`, `ClaudeBot`).
-3. Passage citability scoring based on Princeton University KDD 2024 empirical formulas (word count 134-167 words, statistics, quotes, attributions).
+3. Passage citability scoring based on Princeton University KDD 2024 formulas (word count 134-167 words, statistics, quotes, attributions).
 4. Machine-readable standard discovery (`/llms.txt`).
 
 Testing environment: Python 3.10, 2026-09-19.
@@ -35,13 +35,13 @@ Testing environment: Python 3.10, 2026-09-19.
 
 ---
 
-## Key Engineering Findings
+## Key Engineering Observations
 
 ### 1. Active Crawler Governance Split
-41.7% of surveyed production domains explicitly block model training scrapers (`CCBot`, `GPTBot`) while allowing live AI search retrieval bots (`OAI-SearchBot`, `PerplexityBot`). This confirms an industry shift: companies protect proprietary training data while maintaining visibility in generative search engine answers.
+41.7% of surveyed production domains explicitly block model training scrapers (`CCBot`, `GPTBot`) while allowing live AI search retrieval bots (`OAI-SearchBot`, `PerplexityBot`). Companies protect proprietary training data while maintaining visibility in generative search engine answers.
 
 ### 2. Commercial Landing Page Citability Gap
-The average GEO citability score for commercial SaaS homepages is 41.5/100, compared to 65.2/100 for technical documentation (`web.dev`, `wikipedia.org`). Commercial homepages prioritize conversational copywriting, averaging under 35 words per block. They omit verifiable statistics (+37% boost) and attribution markers (+40% boost), causing AI search engines to synthesize summaries from third-party review sites rather than brand pages.
+The average GEO citability score for commercial SaaS homepages is 41.5/100, compared to 65.2/100 for technical documentation (`web.dev`, `wikipedia.org`). Commercial homepages prioritize brief copywriting (under 35 words per block) and omit verifiable statistics, prompting AI engines to synthesize answers from external review sites.
 
 ### 3. Early /llms.txt Adoption
 Only 16.7% of surveyed sites (`webaudits.pro`, `nextjs.org`) currently publish an `/llms.txt` file. Sites deploying clean markdown index roots provide deterministic navigation for autonomous agents without requiring expensive visual DOM rendering.
