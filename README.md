@@ -1,149 +1,203 @@
 # CitationPulse
 
-Generative Engine Optimization (GEO) & AI Citability Auditor
+Generative Engine Optimization (GEO) and AI citability auditor.
 
-[![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Code Style: Clean](https://img.shields.io/badge/code%20style-production-000000.svg)](https://github.com/xcalibur73/citation-pulse)
-[![Cloud Engine: WebAudits.pro](https://img.shields.io/badge/cloud-webaudits.pro-orange.svg)](https://webaudits.pro/tools/geo-audit)
-
-CitationPulse is a command-line utility and Python audit library for Generative Engine Optimization (GEO). It evaluates web pages against the retrieval and citation heuristics used by Google AI Overviews, ChatGPT Search, Perplexity AI, and Claude.
-
-The scoring model implements empirical findings from the Princeton University KDD 2024 GEO benchmark, tracking passage density, factual attributions, crawl permissions, and knowledge graph disambiguation.
+Part of the [WebAudits.pro](https://webaudits.pro) technical intelligence platform.
 
 ---
 
-## The Shift from SERP Ranking to AI Citation
+## What it does
 
-Traditional search engines index documents through inverted term indexes and PageRank graphs. AI answer engines operate on retrieval-augmented generation (RAG):
-1. Specialized search bots (OAI-SearchBot, PerplexityBot, Claude-SearchBot) crawl and cache web documents.
-2. Dense passage retrieval models segment content into embedding chunks, filtering for concise factual density.
-3. Language models synthesize answers from top-ranked passages, citing only sources with clear attribution and unambiguous entity credentials.
-
-If a site blocks AI search bots in `robots.txt` or buries key conclusions in conversational filler, generative engines skip the document entirely, even if it ranks on page one of traditional search results.
+CitationPulse audits content formatting, robots.txt crawl access, and semantic entities to assess how readily AI search engines (Google AI Overviews, ChatGPT Search, Perplexity AI) can ingest and cite a web page. It evaluates:
+- Passage citability: scans prose for 134-167 word atomic passages, front-loaded definitions, empirical statistics, and named attribution markers based on Princeton University KDD 2024 GEO research.
+- 2026 AI search crawler access: verifies explicit `robots.txt` permissions for search retrieval bots (`OAI-SearchBot`, `Claude-SearchBot`, `PerplexityBot`) versus training scrapers (`GPTBot`, `CCBot`).
+- Schema.org entity disambiguation: audits `sameAs` authority links to Wikidata and Wikipedia.
+- `/llms.txt` validation: verifies the presence and formatting of markdown documentation for language models.
 
 ---
 
-## Technical Capabilities
+## Why it exists
 
-- Passage citability scoring: evaluates content blocks against the Princeton KDD 2024 benchmark. Checks for optimal passage length (134 to 167 words), front-loaded definitions, verifiable quantitative figures, direct quotes, and explicit attribution phrasing.
-- 2026 search crawler governance: parses `robots.txt` rules to distinguish live AI search bots (OAI-SearchBot, Claude-SearchBot, PerplexityBot, Googlebot) from model-training web scrapers (GPTBot, ClaudeBot, CCBot).
-- Entity disambiguation: checks JSON-LD schemas for Organization, Person, and authoritative `sameAs` entity links pointing to Wikidata and Wikipedia.
-- Machine-readable discovery: validates the presence, syntax, and section structure of root `/llms.txt` and `/llms-full.txt` files.
-- Platform-specific breakdowns: calculates individual readiness scores (0 to 100) calibrated for Google AI Overviews, ChatGPT Search, and Perplexity AI.
+Search behavior is shifting from ten blue SERP links to synthesized answer overviews. Standard keyword-density optimization fails in generative search engines:
+- Large language models select citations based on factual density, concise answering passages, and entity verification.
+- Many websites unintentionally block search retrieval bots (`OAI-SearchBot`) in blanket `robots.txt` rules intended to stop model training scrapers.
+
+CitationPulse provides an empirical audit of the technical and syntactic factors governing AI search citation eligibility.
+
+---
+
+## Key features
+
+- **Passage Extraction & Scoring:** Splits body copy into semantic blocks, ranking passages by factual density, word count optimization, and attribution signals.
+- **Search Retrieval Bot Permissions Audit:** Tests origin `robots.txt` against both search retrieval bots and training crawlers.
+- **Schema Entity Disambiguation:** Checks structured data for explicit `sameAs` canonical references that confirm organization and author identity.
+- **LLMS.txt Generator:** Generates a compliant `/llms.txt` template tailored to the audited domain.
+- **Platform Sub-Scores:** Models platform-specific citation preferences across Google AI Overviews, ChatGPT Search, and Perplexity.
+
+---
+
+## Architecture
+
+```text
+[Input Target URL]
+        |
+        +---> [HTML Content Fetcher]
+        |           |
+        |           +---> Passage Segmentation (15+ words, main content)
+        |           +---> Citability Scorer (Word count, stats, attributions)
+        |           +---> Schema.org JSON-LD Disambiguation Auditor
+        |
+        +---> [Robots.txt Evaluator]
+        |           |
+        |           +---> RFC 9309 Rules Matcher (OAI-SearchBot, PerplexityBot)
+        |
+        +---> [LLMS.txt Checker]
+        |
+        v
+[GEO Scoring Engine]
+        |
+        +---> Composite GEO Readiness Score
+        +---> Platform Sub-Scores (AI Overviews, ChatGPT, Perplexity)
+        +---> Terminal Report / Markdown / JSON Pipeline Output
+```
+
+CitationPulse executes four diagnostic components:
+1. `cli.py`: Orchestrates HTTP fetching, passage segmentation from `<main>` and `<article>` tags, and output formatting.
+2. `evaluator.py`: Audits robots.txt permissions for modern AI search bots and checks `/llms.txt` availability.
+3. `scorer.py`: Evaluates passage citability using length targets (134-167 words), statistical patterns, and attribution keywords.
+4. `report_generator.py`: Generates Rich terminal tables, Markdown documentation, and JSON structures.
 
 ---
 
 ## Installation
 
+### Prerequisites
+- Python 3.10 or higher
+
+### Install from Source
 ```bash
 git clone https://github.com/xcalibur73/citation-pulse.git
 cd citation-pulse
 pip install -r requirements.txt
+pip install -e .
 ```
 
 ---
 
-## Quick Start
+## Usage
 
-### Terminal Audit
+### Basic CLI Invocation
 ```bash
-python run.py https://webaudits.pro
+# Audit a target URL for AI search citability
+citation-pulse https://webaudits.pro
+
+# Generate a recommended /llms.txt template for the domain
+citation-pulse https://example.com --generate-llms
+
+# Export machine-readable JSON report for CI pipelines
+citation-pulse https://example.com --output json --save geo-audit.json
+
+# Check installed version
+citation-pulse --version
 ```
 
-### Export Markdown Report
+---
+
+## Example output
+
+```text
++-------------------------------------------------------------------------------+
+| CitationPulse: Generative Engine Optimization (GEO) Auditor                   |
+| Target: https://webaudits.pro                                                 |
+| GEO Readiness Score: 80.1/100                                                 |
+| Analyzed Passages: 8 | High-Probability Snippets: 4                           |
++-------------------------------------------------------------------------------+
+
+AI Search Engine Readiness Breakdown:
++-------------------------------+-----------+-----------------------------------------+
+| AI Search Surface             | Score     | Primary Selection Logic                 |
++-------------------------------+-----------+-----------------------------------------+
+| Google AI Overviews & AI Mode | 74.4/100  | Classic rankings + Schema + answer block|
+| ChatGPT Search (GPT-4o)       | 80.1/100  | OAI-SearchBot access + entity authority |
+| Perplexity AI Search          | 71.6/100  | Freshness + 134-167 word passages + stats|
++-------------------------------+-----------+-----------------------------------------+
+
+2026 AI Search Crawler Access (robots.txt):
+- OAI-SearchBot: ALLOWED (Search retrieval bot)
+- Claude-SearchBot: ALLOWED (Search retrieval bot)
+- PerplexityBot: ALLOWED (Search retrieval bot)
+- GPTBot: ALLOWED (Model training scraper)
+```
+
+---
+
+## Benchmark / methodology
+
+### Empirical 12-Site GEO Index
+- **Dataset:** 12 production web properties across news media, developer documentation, and SaaS blogs.
+- **Command Used:** `python run.py <url> --output json`
+- **Tool Version:** CitationPulse v1.0.0
+- **Environment:** Windows 11 / Ubuntu 22.04, Python 3.12, unthrottled fiber network.
+- **Scoring Weights:**
+  - Passage Citability: 35% (optimal word count, statistics presence, attribution density)
+  - Search Crawler Access: 25% (OAI-SearchBot, PerplexityBot, Claude-SearchBot)
+  - Schema Entity Disambiguation: 25% (`sameAs` links, Organization/Person completeness)
+  - Technical / llms.txt Readiness: 15%
+- **Results:**
+  - 41.7% of surveyed production websites blocked training scrapers while permitting search retrieval bots.
+  - Complete study dataset: [BENCHMARKS.md](BENCHMARKS.md).
+
+---
+
+## Limitations
+
+- **Diagnostic Heuristic:** The GEO Readiness Score and platform sub-scores are project-derived heuristics based on published research (Princeton University KDD 2024). They do not represent proprietary algorithms of OpenAI, Google, or Perplexity, nor do they guarantee inclusion or citation in any AI search engine.
+- **Query Context Independence:** CitationPulse audits static content characteristics. In live systems, AI models select sources dynamically based on the exact user prompt, conversation history, and real-time retrieval rankings.
+- **Paywalls & Gated Content:** Analyzes publicly accessible HTML; it does not audit content hidden behind client logins or subscription walls.
+
+---
+
+## Accuracy / standards
+
+CitationPulse categorizes its diagnostic metrics as follows:
+
+| Metric / Check | Classification | Authority / Standard |
+|:---|:---|:---|
+| Robots.txt Crawler Evaluation | Google / Web Standard | IETF RFC 9309 |
+| Schema.org Entity Verification | Web Standard | Schema.org Community Specifications |
+| /llms.txt Syntax & Availability | Emerging Community Standard | llmstxt.org Specification |
+| Passage Citability Score | Project-Derived Heuristic | Implementation of Princeton KDD 2024 factors |
+| Platform Readiness Sub-Scores | Experimental Metric | Weighted projection model |
+
+---
+
+## Testing
+
+CitationPulse includes automated unit tests covering passage extraction, citability scoring, robots.txt evaluation, and report formatters:
+
 ```bash
-python run.py https://example.com/article --output markdown --save GEO-AUDIT.md
+# Run unit test suite
+python -m unittest discover -s tests
+
+# Test execution output
+# Ran 4 tests in 0.001s
+# OK
 ```
 
-### Generate Standards-Compliant /llms.txt Template
-```bash
-python run.py https://example.com --generate-llms
-```
-
-### Export JSON for CI/CD Pipelines
-```bash
-python run.py https://example.com --output json --save audit.json
-```
+Continuous integration runs automatically on every commit and pull request via GitHub Actions across Linux and Windows runners.
 
 ---
 
-## Web Platform Integration (WebAudits.pro)
+## Roadmap
 
-To run hosted audits without installing local Python dependencies:
-- Web tool: [WebAudits.pro/tools/geo-audit](https://webaudits.pro/tools/geo-audit)
-- Automated crawler access checks and sitemap scanning.
-
----
-
-## Scoring Architecture
-
-CitationPulse evaluates content across four signal layers:
-
-| Layer | Weight | Signals Evaluated | Primary Retrieval Target |
-|:---|:---:|:---|:---|
-| Passage Citability | 35% | Word count (134-167 words), stats density, attributions, quotations | Perplexity, ChatGPT Search |
-| Crawler Access | 25% | `robots.txt` access for `OAI-SearchBot`, `PerplexityBot`, `Claude-SearchBot` | Live AI search indexing |
-| Entity Graph | 25% | JSON-LD schema, `sameAs` Wikidata/Wikipedia links, author credentials | Google AI Overviews |
-| Technical Standards | 15% | `/llms.txt` syntax, markdown heading hierarchy, blockquote descriptions | Agent indexation |
-
-### Empirical Heuristics Reference
-
-- Adding verifiable numerical data increased citation frequency by up to 37% in the Princeton KDD 2024 study.
-- Explicit attribution phrases ("according to", "study by") improved passage retrieval confidence by up to 40%.
-- Passages between 134 and 167 words showed the highest extraction rate across neural embedding models.
-
----
-
-## Python API Usage
-
-```python
-from citation_pulse.passage_scorer import score_passage
-from citation_pulse.crawler_inspector import test_crawler_access
-
-# Score a passage block
-passage = "According to a 2024 study by MIT researchers, synthetic data pipelines reduced model error rates by 34%."
-result = score_passage(passage)
-print(f"Citability Score: {result['score']}/100")
-print(f"Signals: {result['signals']}")
-
-# Audit robots.txt permissions
-status = test_crawler_access("https://example.com", "User-agent: *\nDisallow: /admin/\n")
-print(f"Search Bots Score: {status['search_bots_score']}/100")
-```
-
----
-
-## Empirical Benchmarks
-
-CitationPulse was evaluated while beta testing on random sites (including developer frameworks, media publications, SaaS homepages, and documentation libraries). Full study findings: [BENCHMARKS.md](BENCHMARKS.md).
-
-Key empirical findings:
-- 41.7% of surveyed production domains block training scrapers (`CCBot`, `GPTBot`) while allowing live AI search retrieval bots (`OAI-SearchBot`, `PerplexityBot`).
-- Commercial landing pages average 41.5/100 in GEO citability due to short conversational blocks and a lack of verifiable numerical data.
-- Only 16.7% of evaluated domains currently publish an `/llms.txt` file for autonomous agent discovery.
-
----
-
-## Running Unit Tests
-
-```bash
-python -m unittest discover -s tests -p "test_*.py"
-```
-
----
-
-## Author
-
-Maintained by [@xcalibur73](https://github.com/xcalibur73), creator of [WebAudits.pro](https://webaudits.pro).
-
-Part of a technical SEO engineering tooling trio:
-1. [dom-hydrate](https://github.com/xcalibur73/dom-hydrate): Headless Chromium SSR vs CSR DOM diff engine.
-2. [citation-pulse](https://github.com/xcalibur73/citation-pulse): GEO and AI search citability benchmark engine.
-3. [index-trace](https://github.com/xcalibur73/index-trace): Search Console emergency triage and crawler collision tracer.
+- [x] Initial release with Princeton KDD scoring rules and robots.txt bot checks.
+- [x] PEP 621 packaging, CLI `--version`, and Windows cp1252 encoding hardening.
+- [ ] Embedding similarity evaluation using local sentence-transformers.
+- [ ] Real-time SERP verification via Perplexity and ChatGPT Search APIs.
+- [ ] WebAudits.pro continuous AI crawler monitoring integration.
 
 ---
 
 ## License
 
-Licensed under the [MIT License](LICENSE).
+MIT License. See [LICENSE](LICENSE) for full details.
