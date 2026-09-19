@@ -32,11 +32,29 @@ CitationPulse audits content formatting, robots.txt crawl permissions, and seman
 
 Standard keyword-density optimization fails in generative search engines. Large language models prioritize concise answering passages, verified data points, and clear entity attributions. Furthermore, websites frequently block search retrieval crawlers (`OAI-SearchBot`) in blanket `robots.txt` rules intended to stop model training scrapers.
 
-CitationPulse evaluates the key factors governing AI search citation readiness:
-- **Passage Citability Scoring:** Scans prose for 134-167 word atomic passages, front-loaded definitions, empirical data, and named attribution markers based on Princeton University KDD 2024 GEO research.
+CitationPulse evaluates key factors governing AI search citation readiness:
+- **Passage Citability Scoring:** Scans prose for 134-167 word atomic passages, front-loaded definitions, empirical data, and named attribution markers. This is a project-defined heuristic based partly on published GEO research (Aggarwal et al., Princeton / IIT Delhi KDD 2024).
 - **AI Search Crawler Access:** Verifies explicit `robots.txt` permissions for search retrieval bots (`OAI-SearchBot`, `Claude-SearchBot`, `PerplexityBot`) versus training scrapers (`GPTBot`, `CCBot`).
 - **Schema.org Entity Disambiguation:** Checks structured data for explicit `sameAs` authority links to Wikidata and Wikipedia.
-- **`/llms.txt` Validation:** Verifies the presence and formatting of markdown documentation for language models.
+- **`/llms.txt` Format Validation:** Verifies the presence and syntax of markdown documentation for language model scrapers. Note: Google Search Central explicitly clarified in June 2026 that `llms.txt` is not required for Google Search and does not affect Google organic rankings or visibility. CitationPulse evaluates `/llms.txt` strictly as an optional file convention for third-party AI agents.
+
+---
+
+## Visual Diagnostic Workflow
+
+```text
+[Input Target URL]
+      |
+      v
+[1. Passage Citability Scan] --------> Finding: Long unbroken paragraphs (320 words) with buried definitions
+      |                                Recommendation: Split into 130-160 word atomic answer passages with bold lead-ins
+      v
+[2. Robots.txt Crawler Audit] -------> Finding: OAI-SearchBot blocked by blanket User-agent: * Disallow rule
+      |                                Recommendation: Add explicit "User-agent: OAI-SearchBot Allow: /" exception
+      v
+[3. Schema Disambiguation Check] ----> Finding: Organization node lacks sameAs entity references
+                                       Recommendation: Inject sameAs links to official Wikidata and LinkedIn profiles
+```
 
 ---
 
@@ -121,15 +139,17 @@ Platform Readiness Indicators:
 
 ## Standards & Heuristics
 
-CitationPulse evaluates content using academic research findings and project heuristics:
+CitationPulse separates established Internet standards from academic optimization heuristics:
 
 | Metric / Check | Classification | Authority / Basis |
 |:---|:---|:---|
 | AI Crawler Access | Internet Standard | IETF RFC 9309 (Robots Exclusion Protocol) |
-| Passage Citability Modeling | Academic Research Heuristic | Princeton University KDD 2024 GEO Study |
+| Passage Citability Modeling | Academic Research Heuristic | Project heuristic based on Princeton / IIT Delhi KDD 2024 GEO Study |
 | Entity Disambiguation | Web Standard | Schema.org Community Vocabulary |
-| `/llms.txt` Syntax | Emerging Web Standard | llmstxt.org Specification |
+| `/llms.txt` Syntax | Emerging File Convention | llmstxt.org proposal (Not required for Google Search) |
 | Platform Readiness Scores | Project-Derived Heuristic | Multi-factor weighted eligibility models |
+
+> **Google Search Central Note:** Google clarified in June 2026 that `llms.txt` is not required for Google Search and does not affect Google rankings or indexing. CitationPulse uses it solely as an optional readiness metric for third-party AI agents.
 
 ---
 

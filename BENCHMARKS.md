@@ -4,15 +4,18 @@ Evaluation of AI search crawler access, passage citability scores, and Knowledge
 
 ---
 
-## Methodology
+## Benchmark Methodology
 
-Evaluated using CitationPulse v1.0.0. Audits measured:
-1. Retrieval permissions in `robots.txt` across live search crawlers (`OAI-SearchBot`, `Claude-SearchBot`, `PerplexityBot`, `Googlebot`).
-2. Opt-out status for foundation model scrapers (`GPTBot`, `CCBot`, `ClaudeBot`).
-3. Passage citability scoring based on Princeton University KDD 2024 formulas (word count 134-167 words, statistics, quotes, attributions).
-4. Machine-readable standard discovery (`/llms.txt`).
-
-Testing environment: Python 3.10, 2026-09-19.
+- **Dataset:** 12 production domain homepages and documentation portals across tech journalism, SaaS, dev tools, and encyclopedias.
+- **Sampling Method:** HTTP GET requests fetching HTML content, `/robots.txt`, and `/llms.txt`. Main content extracted via `<main>` and `<article>` tags.
+- **Date:** 2026-09-19
+- **Tool Version:** CitationPulse v1.0.0
+- **Environment:** Windows 11 / Ubuntu 22.04 LTS, Python 3.10+, 1Gbps network.
+- **Command:** `citation-pulse <url> --output json`
+- **Raw Observations:** Paragraph word counts, numeric statistics count, attribution phrases, RFC 9309 rule match per bot, presence of `sameAs` links.
+- **Calculation Method:** Passage citability score based on Princeton KDD 2024 heuristics (penalties for <100 or >200 words, bonuses for data points); composite GEO readiness weighted across crawl access (30%), passage citability (30%), entities (20%), `/llms.txt` (10%), heading hierarchy (10%).
+- **Result:** Multi-factor readiness scoring highlighting the difference between model training blocks and search retrieval permissions.
+- **Limitations:** Heuristic projection only; actual generative engine citations depend on dynamic query intent, user prompt context, and retrieval-augmented generation (RAG) rankers. Note that `/llms.txt` has no effect on Google Search rankings per Google's June 2026 statement.
 
 ---
 
