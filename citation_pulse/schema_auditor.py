@@ -3,6 +3,7 @@ Schema.org Entity Disambiguation and Knowledge Graph Auditor for GEO.
 """
 
 import json
+import re
 from typing import Dict, Any, List
 from bs4 import BeautifulSoup
 
@@ -15,6 +16,18 @@ def audit_schema_entities(soup: BeautifulSoup) -> Dict[str, Any]:
         raw = raw.strip()
         if not raw:
             continue
+
+        # Strip HTML comments and CDATA wrappers
+        if raw.startswith("<!--") and raw.endswith("-->"):
+            raw = raw[4:-3].strip()
+        raw = re.sub(r"^//\s*<!\[CDATA\[", "", raw, flags=re.MULTILINE)
+        raw = re.sub(r"^//\s*\]\]>", "", raw, flags=re.MULTILINE)
+        raw = re.sub(r"/\*\s*<!\[CDATA\[\s*\*/", "", raw)
+        raw = re.sub(r"/\*\s*\]\]>\s*\*/", "", raw)
+        raw = raw.strip()
+        if not raw:
+            continue
+
         try:
             parsed = json.loads(raw)
             if isinstance(parsed, list):
