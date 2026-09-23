@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "citation-pulse"
-version = "1.2.0"
+version = "1.2.1"
 description = "Generative Engine Optimization (GEO) and AI search engine citability auditor"
 readme = "README.md"
 authors = [
@@ -37,5 +37,5 @@ exclude = ["assets*", "tests*"]
 
 [project.urls]
 "Homepage" = "https://github.com/xcalibur73/citation-pulse"
-"Cloud Engine" = "https://webaudits.pro/tools/citation-pulse"
+"Cloud Engine" = "https://webaudits.pro/tools/geo-audit"
 "Bug Tracker" = "https://github.com/xcalibur73/citation-pulse/issues"

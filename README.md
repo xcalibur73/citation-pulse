@@ -5,8 +5,9 @@
 
 
 Generative Engine Optimization (GEO) and AI citability auditor.
-
 Part of the [WebAudits.pro](https://webaudits.pro) technical intelligence platform.
+
+> **Interactive Web Tool**: Run live GEO citability and crawler permission audits directly in your browser at [webaudits.pro/tools/geo-audit](https://webaudits.pro/tools/geo-audit).
 
 ![Terminal Verification](assets/terminal_preview.png)
 
